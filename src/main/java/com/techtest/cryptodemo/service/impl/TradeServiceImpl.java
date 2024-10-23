@@ -110,6 +110,7 @@ public class TradeServiceImpl implements TradeService {
         transaction.setCryptoType(cryptoType);
         transaction.setAmount(amount);
         transaction.setPrice(price);
+        transaction.setTransactionType(transactionType);
         transaction.setTimestamp(LocalDateTime.now());
         transactionRepository.save(transaction);
         log.info("Exit recordTransaction method");

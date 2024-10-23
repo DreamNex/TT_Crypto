@@ -13,7 +13,7 @@ public class Transaction {
     @ManyToOne
     private Users user;
     private String cryptoType;
-    private String purchasedType;
+    private String transactionType;
     private double amount;
     private double price;
     private LocalDateTime timestamp;
@@ -42,12 +42,12 @@ public class Transaction {
         this.cryptoType = cryptoType;
     }
 
-    public String getPurchasedType() {
-        return purchasedType;
+    public String getTransactionType() {
+        return transactionType;
     }
 
-    public void setPurchasedType(String purchasedType) {
-        this.purchasedType = purchasedType;
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 
     public double getAmount() {
