@@ -10,6 +10,8 @@ import com.techtest.cryptodemo.repositories.TransactionRepository;
 import com.techtest.cryptodemo.repositories.UserRepository;
 import com.techtest.cryptodemo.repositories.WalletRepository;
 import com.techtest.cryptodemo.service.TradeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 @Service
 public class TradeServiceImpl implements TradeService {
 
+    private static final Logger log = LoggerFactory.getLogger(TradeServiceImpl.class);
 
     private WalletRepository walletRepository;
     private TransactionRepository transactionRepository;
@@ -34,6 +37,7 @@ public class TradeServiceImpl implements TradeService {
 
     @Override
     public String buyCrypto(String cryptoType, double amount, Long userId) {
+        log.info("Entered buyCrypto method");
         Wallet wallet = walletRepository.findById(userId).orElseThrow();
         Price currentPrice = priceRepository.findTopByCryptoTypeOrderByTimestampDesc(cryptoType);
 
@@ -44,7 +48,9 @@ public class TradeServiceImpl implements TradeService {
                 wallet.setUsdtBalance(wallet.getUsdtBalance()-totalCost);
                 recordTransaction(userId,cryptoType,"BUY", amount,currentPrice.getAskPrice());
                 walletRepository.save(wallet);
+                log.info("Exit buyCrypto method");
                 return "Purchase successful";
+
             }
 
         }else if (TradeConst.BITCOIN_CONST.equalsIgnoreCase(cryptoType)) {
@@ -54,15 +60,17 @@ public class TradeServiceImpl implements TradeService {
                 wallet.setUsdtBalance(wallet.getUsdtBalance() - totalCost);
                 recordTransaction(userId, cryptoType, "BUY", amount, currentPrice.getAskPrice());
                 walletRepository.save(wallet);
+                log.info("Exit buyCrypto method");
                 return "Purchase successful";
             }
         }
-
+        log.info("Exit buyCrypto method");
         return "Insufficient funds to purchase";
     }
 
     @Override
     public String sellCrypto(String cryptoType, double amount, Long userId) {
+        log.info("Entered sellCrypto method");
         Wallet wallet = walletRepository.findById(userId).orElseThrow();
         Price currentPrice = priceRepository.findTopByCryptoTypeOrderByTimestampDesc(cryptoType);
 
@@ -73,6 +81,7 @@ public class TradeServiceImpl implements TradeService {
                 wallet.setUsdtBalance(wallet.getUsdtBalance()+totalProfit);
                 recordTransaction(userId,cryptoType,"SELL", amount,currentPrice.getAskPrice());
                 walletRepository.save(wallet);
+                log.info("Exit sellCrypto method");
                 return "Sold ETH successful";
             }
 
@@ -83,15 +92,18 @@ public class TradeServiceImpl implements TradeService {
                 wallet.setUsdtBalance(wallet.getUsdtBalance() + totalProfit);
                 recordTransaction(userId, cryptoType, "SELL", amount, currentPrice.getAskPrice());
                 walletRepository.save(wallet);
+                log.info("Exit sellCrypto method");
                 return "Sold BIT successful";
             }
         }
 
+        log.info("Exit sellCrypto method");
         return "Insufficient cryto to sell";
     }
 
     @Override
     public void recordTransaction(Long userId, String cryptoType, String transactionType, double amount, double price) {
+        log.info("Entered recordTransaction method");
         Users uuser = userRepository.findById(userId).orElseThrow();
         Transaction transaction = new Transaction();
         transaction.setUser(uuser);
@@ -99,6 +111,9 @@ public class TradeServiceImpl implements TradeService {
         transaction.setAmount(amount);
         transaction.setPrice(price);
         transaction.setTimestamp(LocalDateTime.now());
+        transactionRepository.save(transaction);
+        log.info("Exit recordTransaction method");
+
 
     }
 }

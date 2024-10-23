@@ -4,6 +4,8 @@ import com.techtest.cryptodemo.common.TradeConst;
 import com.techtest.cryptodemo.entities.Price;
 import com.techtest.cryptodemo.repositories.PriceRepository;
 import com.techtest.cryptodemo.service.PriceProcSchedService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -19,6 +21,8 @@ import java.util.Map;
 @Service
 public class PriceProcSchedServiceImpl implements PriceProcSchedService{
 
+    private static final Logger log = LoggerFactory.getLogger(PriceProcSchedServiceImpl.class);
+
     private PriceRepository priceRepository;
     private RestTemplate restTemplate;
 
@@ -31,6 +35,7 @@ public class PriceProcSchedServiceImpl implements PriceProcSchedService{
     @Scheduled(fixedRate = 10000)
     @Override
     public void processPrices() {
+        log.info("Entered processPrices() ");
         double binanceBtcAsk = fetchPriceBinance(TradeConst.BITCOIN_CONST, TradeConst.ASK_PRICE);
         double binanceEthAsk = fetchPriceBinance(TradeConst.ETHEREUM_CONST, TradeConst.ASK_PRICE);
         double binanceEthBid = fetchPriceBinance(TradeConst.ETHEREUM_CONST, TradeConst.BID_PRICE);
@@ -49,7 +54,7 @@ public class PriceProcSchedServiceImpl implements PriceProcSchedService{
 
         savePrice(TradeConst.BITCOIN_CONST, bestBtcBid, bestBtcAsk);
         savePrice(TradeConst.ETHEREUM_CONST, bestEthBid, bestEthAsk);
-        System.out.println("Out of method");
+        log.info("Exited processPrice()");
     }
 
     @Override
@@ -68,7 +73,7 @@ public class PriceProcSchedServiceImpl implements PriceProcSchedService{
             }
 
         }catch(Exception e){
-            System.out.println("Error while fetching price from binance url: " + e.getMessage());
+            log.info("Error while fetching price from binance url: {}", e.getMessage());
 
         }
         return 0.0;
@@ -98,20 +103,22 @@ public class PriceProcSchedServiceImpl implements PriceProcSchedService{
 
 
         }catch(Exception e){
-            System.out.println("Error while fetching price from houbi url: " + e.getMessage());
+            log.info("Error while fetching price from houbi url: {}", e.getMessage());
         }
         return 0.0;
     }
 
     @Override
     public void savePrice(String cryptoType, double askPrice, double bidPrice) {
+        log.info("Enter savePrice()");
         Price price = new Price();
         price.setCryptoType(cryptoType);
         price.setAskPrice(askPrice);
         price.setBidPrice(bidPrice);
         price.setTimestamp(LocalDateTime.now());
         priceRepository.save(price);
-        System.out.println("Price saved");
+        log.info("Price saved");
+        log.info("Exiting savePrice()");
 
     }
 }
