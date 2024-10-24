@@ -10,8 +10,7 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private Users user;
+    private Long userId;
     private String cryptoType;
     private String transactionType;
     private double amount;
@@ -26,12 +25,12 @@ public class Transaction {
         this.id = id;
     }
 
-    public Users getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(Users user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getCryptoType() {

@@ -74,7 +74,7 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public String sellCrypto(String cryptoType, double amount, Long userId) {
         log.info("Entered sellCrypto method");
-        Wallet wallet = walletRepository.findById(userId).orElseThrow();
+        Wallet wallet = walletRepository.findByUserId(userId);
         Price currentPrice = priceRepository.findTopByCryptoTypeOrderByTimestampDesc(cryptoType);
 
         if(TradeConst.ETHEREUM_CONST.equalsIgnoreCase(cryptoType) && wallet.getEthValue() >= amount){
@@ -107,9 +107,9 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public void recordTransaction(Long userId, String cryptoType, String transactionType, double amount, double price) {
         log.info("Entered recordTransaction method");
-        Users uuser = userRepository.findById(userId).orElseThrow();
+        //Users uuser = userRepository.findById(userId).orElseThrow();
         Transaction transaction = new Transaction();
-        transaction.setUser(uuser);
+        transaction.setUserId(userId);
         transaction.setCryptoType(cryptoType);
         transaction.setAmount(amount);
         transaction.setPrice(price);
@@ -140,14 +140,13 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public ProfileDTO getProfile(Long userId) {
 
-        //Assumption as cannot be no user but user can have no wallet yet
         Users currentUser = userRepository.findById(userId).orElseThrow();
 
-        Optional<Wallet> wallet = walletRepository.findById(userId);
+        Wallet wallet = walletRepository.findByUserId(userId);
 
-        if(wallet.isPresent()){
-            return new ProfileDTO(userId, currentUser.getUserName(),wallet.get().getUsdtBalance(),
-                    wallet.get().getEthValue(),wallet.get().getBtcValue());
+        if(wallet != null){
+            return new ProfileDTO(userId, currentUser.getUserName(),wallet.getUsdtBalance(),
+                    wallet.getEthValue(),wallet.getBtcValue());
         }else {
             return new ProfileDTO(userId, currentUser.getUserName(), 0.0,0.0,0.0);
         }

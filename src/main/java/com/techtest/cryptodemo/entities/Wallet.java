@@ -8,9 +8,7 @@ public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    private Users users;
+    private Long userId;
 
     private double usdtBalance = 50000.0;
     private double btcValue = 0.0;
@@ -24,12 +22,12 @@ public class Wallet {
         this.id = id;
     }
 
-    public Users getUsers() {
-        return users;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUsers(Users users) {
-        this.users = users;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public double getUsdtBalance() {
