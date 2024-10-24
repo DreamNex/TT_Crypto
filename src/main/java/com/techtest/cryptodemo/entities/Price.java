@@ -55,4 +55,5 @@ public class Price {
     public void setAskPrice(double askPrice) {
         this.askPrice = askPrice;
     }
+
 }

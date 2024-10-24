@@ -1,5 +1,6 @@
 package com.techtest.cryptodemo.service.impl;
 
+import com.techtest.cryptodemo.DTO.AggregatedPriceDTO;
 import com.techtest.cryptodemo.common.TradeConst;
 import com.techtest.cryptodemo.entities.Price;
 import com.techtest.cryptodemo.entities.Transaction;
@@ -116,5 +117,21 @@ public class TradeServiceImpl implements TradeService {
         log.info("Exit recordTransaction method");
 
 
+    }
+
+    @Override
+    public AggregatedPriceDTO getLatestAgPrice(String cryptoType) {
+
+        double bestBidPrice = 0.0;
+        double bestAskPrice = 0.0;
+
+        Price latestPrice = priceRepository.findTopByCryptoTypeOrderByTimestampDesc(cryptoType);
+
+        if(latestPrice != null){
+            bestAskPrice = latestPrice.getAskPrice();
+            bestBidPrice = latestPrice.getBidPrice();
+        }
+
+        return new AggregatedPriceDTO(cryptoType,bestBidPrice,bestAskPrice);
     }
 }

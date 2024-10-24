@@ -1,14 +1,12 @@
 package com.techtest.cryptodemo.restcontroller;
 
+import com.techtest.cryptodemo.DTO.AggregatedPriceDTO;
 import com.techtest.cryptodemo.service.impl.TradeServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -32,5 +30,10 @@ public class TradeController {
     @PostMapping("/sell")
     public ResponseEntity<String> sellCrypto(@RequestParam String cryptoType, @RequestParam double amount, @RequestParam Long userId){
         return ResponseEntity.ok(tradeService.sellCrypto(cryptoType,amount,userId));
+    }
+
+    @GetMapping("/getbestprice")
+    public AggregatedPriceDTO getLatestBestPrice(@RequestParam String cryptoType){
+        return tradeService.getLatestAgPrice(cryptoType);
     }
 }
