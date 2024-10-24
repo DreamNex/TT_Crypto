@@ -2,12 +2,15 @@ package com.techtest.cryptodemo.restcontroller;
 
 import com.techtest.cryptodemo.DTO.AggregatedPriceDTO;
 import com.techtest.cryptodemo.DTO.ProfileDTO;
+import com.techtest.cryptodemo.DTO.TransactionHistoryDTO;
 import com.techtest.cryptodemo.service.impl.TradeServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -41,5 +44,10 @@ public class TradeController {
     @GetMapping("/getuserprofile") //wallet and username
     public ProfileDTO getUserProfile(@RequestParam Long userId){
         return tradeService.getProfile(userId);
+    }
+
+    @GetMapping("/gettransactionhistory")
+    public List<TransactionHistoryDTO> getUserTradingHistory(@RequestParam Long userId){
+        return tradeService.getUserTradeHistory(userId);
     }
 }

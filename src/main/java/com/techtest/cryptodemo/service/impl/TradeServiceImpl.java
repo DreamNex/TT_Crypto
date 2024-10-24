@@ -2,6 +2,7 @@ package com.techtest.cryptodemo.service.impl;
 
 import com.techtest.cryptodemo.DTO.AggregatedPriceDTO;
 import com.techtest.cryptodemo.DTO.ProfileDTO;
+import com.techtest.cryptodemo.DTO.TransactionHistoryDTO;
 import com.techtest.cryptodemo.common.TradeConst;
 import com.techtest.cryptodemo.entities.Price;
 import com.techtest.cryptodemo.entities.Transaction;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -151,5 +154,24 @@ public class TradeServiceImpl implements TradeService {
             return new ProfileDTO(userId, currentUser.getUserName(), 0.0,0.0,0.0);
         }
 
+    }
+
+    @Override
+    public List<TransactionHistoryDTO> getUserTradeHistory(Long userId) {
+
+        Users currentUser = userRepository.findById(userId).orElseThrow();
+        List<Transaction> transactions = transactionRepository.findByUserIdOrderByTimestampDesc(userId);
+        List<TransactionHistoryDTO> response = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            response.add(mapToTransacationDTO(transaction,userId,currentUser.getUserName()));
+        }
+
+        return response;
+
+    }
+
+    private TransactionHistoryDTO mapToTransacationDTO(Transaction transaction,Long userId, String userName){
+        return new TransactionHistoryDTO(userId,userName,transaction.getCryptoType(),transaction.getTransactionType(),
+                transaction.getAmount(),transaction.getPrice(),transaction.getTimestamp());
     }
 }
