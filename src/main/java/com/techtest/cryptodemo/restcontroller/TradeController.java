@@ -50,4 +50,6 @@ public class TradeController {
     public List<TransactionHistoryDTO> getUserTradingHistory(@RequestParam Long userId){
         return tradeService.getUserTradeHistory(userId);
     }
+
+    //END COMMIT comment
 }
