@@ -1,6 +1,7 @@
 package com.techtest.cryptodemo.service.impl;
 
 import com.techtest.cryptodemo.DTO.AggregatedPriceDTO;
+import com.techtest.cryptodemo.DTO.ProfileDTO;
 import com.techtest.cryptodemo.common.TradeConst;
 import com.techtest.cryptodemo.entities.Price;
 import com.techtest.cryptodemo.entities.Transaction;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class TradeServiceImpl implements TradeService {
@@ -133,5 +135,22 @@ public class TradeServiceImpl implements TradeService {
         }
 
         return new AggregatedPriceDTO(cryptoType,bestBidPrice,bestAskPrice);
+    }
+
+    @Override
+    public ProfileDTO getProfile(Long userId) {
+
+        //Assumption as cannot be no user but user can have no wallet yet
+        Users currentUser = userRepository.findById(userId).orElseThrow();
+
+        Optional<Wallet> wallet = walletRepository.findById(userId);
+
+        if(wallet.isPresent()){
+            return new ProfileDTO(userId, currentUser.getUserName(),wallet.get().getUsdtBalance(),
+                    wallet.get().getEthValue(),wallet.get().getBtcValue());
+        }else {
+            return new ProfileDTO(userId, currentUser.getUserName(), 0.0,0.0,0.0);
+        }
+
     }
 }

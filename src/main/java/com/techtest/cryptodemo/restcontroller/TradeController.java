@@ -1,6 +1,7 @@
 package com.techtest.cryptodemo.restcontroller;
 
 import com.techtest.cryptodemo.DTO.AggregatedPriceDTO;
+import com.techtest.cryptodemo.DTO.ProfileDTO;
 import com.techtest.cryptodemo.service.impl.TradeServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,5 +36,10 @@ public class TradeController {
     @GetMapping("/getbestprice")
     public AggregatedPriceDTO getLatestBestPrice(@RequestParam String cryptoType){
         return tradeService.getLatestAgPrice(cryptoType);
+    }
+
+    @GetMapping("/getuserprofile") //wallet and username
+    public ProfileDTO getUserProfile(@RequestParam Long userId){
+        return tradeService.getProfile(userId);
     }
 }
